@@ -17,7 +17,7 @@ public class SearchForService extends Behaviour {
 	@Override
 	public void action() {
 		agent.log("Search for " + type);
-		agent.searchService(type);
+		agent.setSearchResults(agent.searchService(type));
 	}
 
 	@Override

@@ -1,8 +1,10 @@
 package agents;
 
 import behaviours.Auction;
+import behaviours.Curator;
 import behaviours.SearchForService;
 import jade.core.*;
+import jade.core.behaviours.Behaviour;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.core.behaviours.ParallelBehaviour;
 import jade.core.behaviours.SequentialBehaviour;
@@ -20,11 +22,6 @@ public class CuratorAgent extends MuseumAgent {
 		
 		registerService("auctioneer", "auctioneer");
 		
-		SequentialBehaviour seq = new SequentialBehaviour();
-		
-		seq.addSubBehaviour(new SearchForService(this, "bidder", 3));
-		seq.addSubBehaviour(new Auction(this, 500, 50, 5));
-		
-		addBehaviour(seq);
+		addBehaviour(new Curator(this, "bidder", 3, 500, 50, 5));
 	}
 }

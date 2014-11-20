@@ -14,19 +14,31 @@ public class Bidding extends Behaviour{
 	public Bidding(MuseumAgent agent) {
 		this.agent = agent;
 		
-		Random rnd = new Random(600);
-		highestValue = rnd.nextInt();
+		Random rnd = new Random();
+		highestValue = rnd.nextInt(500);
+		
+		agent.log("Highest bid = " + highestValue);
 	}
 	
+	public boolean isAuctionFinished() {
+		return auctionFinished;
+	}
+
+	public void setAuctionFinished(boolean auctionFinished) {
+		this.auctionFinished = auctionFinished;
+	}
+
 	@Override
 	public void action() {
 		ACLMessage rcv = agent.blockingReceive();
-		int requestedPrice = Integer.parseInt(rcv.getContent());
 		
 		if(rcv.getPerformative() == ACLMessage.REFUSE) {
 			agent.log("End of auction received");
 			auctionFinished = true;
+			return;
 		}
+		
+		int requestedPrice = Integer.parseInt(rcv.getContent());
 		
 		ACLMessage msg;
 		

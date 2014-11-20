@@ -50,6 +50,8 @@ public class Auction extends Behaviour{
 			
 			broadcast(msg);
 		}
+		
+		currentPrice -= step;
 	}
 
 	@Override
@@ -58,7 +60,7 @@ public class Auction extends Behaviour{
 	}
 	
 	protected boolean terminationCondition() {
-		return auctionFinished && currentPrice < lowestPrice;
+		return auctionFinished || currentPrice < lowestPrice;
 	}
 
 	protected AID[] getBidders(DFAgentDescription[] ad) {
