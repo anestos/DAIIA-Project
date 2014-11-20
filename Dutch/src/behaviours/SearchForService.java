@@ -8,10 +8,10 @@ public class SearchForService extends Behaviour {
 	protected String type;
 	protected int expectedResultSize;
 	
-	public SearchForService(String type, int expectedResultSize) {
+	public SearchForService(MuseumAgent agent, String type, int expectedResultSize) {
+		this.agent = agent;
 		this.type = type;
 		this.expectedResultSize = expectedResultSize;
-		this.agent = (MuseumAgent)myAgent;
 	}
 
 	@Override

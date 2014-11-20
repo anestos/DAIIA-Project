@@ -1,5 +1,6 @@
 package agents;
 
+import behaviours.Bidding;
 import behaviours.SearchForService;
 import jade.core.*;
 import jade.core.behaviours.*;
@@ -26,7 +27,10 @@ public class ProfilerAgent extends MuseumAgent {
 			userName = (String) args[0];
 		}
 		
-		addBehaviour(new SearchForService("auctioneer", 1));
+		//addBehaviour(new SearchForService(this, "auctioneer", 1));
+		registerService("bidder", "bidder");
+		
+		addBehaviour(new Bidding(this));
 	}
 
 	// Print the actual state of the agent.

@@ -1,9 +1,11 @@
 package agents;
 
+import behaviours.Auction;
 import behaviours.SearchForService;
 import jade.core.*;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.core.behaviours.ParallelBehaviour;
+import jade.core.behaviours.SequentialBehaviour;
 import jade.domain.DFService;
 import jade.domain.FIPAException;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
@@ -18,6 +20,11 @@ public class CuratorAgent extends MuseumAgent {
 		
 		registerService("auctioneer", "auctioneer");
 		
-		addBehaviour(new SearchForService("bidder", 3));
+		SequentialBehaviour seq = new SequentialBehaviour();
+		
+		seq.addSubBehaviour(new SearchForService(this, "bidder", 3));
+		seq.addSubBehaviour(new Auction(this, 500, 50, 5));
+		
+		addBehaviour(seq);
 	}
 }
