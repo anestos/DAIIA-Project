@@ -14,6 +14,7 @@ public class Auction extends Behaviour{
 	protected ACLMessage[] msgQueue;
 	protected int highestPrice, lowestPrice, currentPrice, step;
 	protected boolean auctionFinished = false;
+	protected long start, stop;
 	
 	public Auction(MuseumAgent agent, int highestPrice, int lowestPrice, int step) {
 		this.agent = agent;
@@ -23,6 +24,9 @@ public class Auction extends Behaviour{
 		this.step = step;
 		this.bidders = getBidders(agent.getSearchResults());
 		this.msgQueue = new ACLMessage[bidders.length];
+		this.start = System.currentTimeMillis();
+		
+		agent.log("Auction started.");
 	}
 	
 	@Override
@@ -31,6 +35,8 @@ public class Auction extends Behaviour{
 		msg.setContent("" + currentPrice);
 		
 		broadcast(msg);
+		
+		agent.log("Proposal = " + currentPrice);
 		
 		for(int i = 0; i < bidders.length; i++) {
 			ACLMessage rcv = agent.blockingReceive();
@@ -45,13 +51,20 @@ public class Auction extends Behaviour{
 			}
 		}
 		
+		currentPrice -= step;
+		
 		if(terminationCondition()) {
 			msg = new ACLMessage(ACLMessage.REFUSE);
 			
 			broadcast(msg);
+			
+			if(terminationWithoutAgreement()) {
+				agent.log("No agreement reached.");
+			}
+			
+			this.stop = System.currentTimeMillis();
+			agent.log("Auction time = " + ((stop - start) + " ms."));
 		}
-		
-		currentPrice -= step;
 	}
 
 	@Override
@@ -60,7 +73,15 @@ public class Auction extends Behaviour{
 	}
 	
 	protected boolean terminationCondition() {
-		return auctionFinished || currentPrice < lowestPrice;
+		return terminationDueAgreement() || terminationWithoutAgreement();
+	}
+	
+	protected boolean terminationDueAgreement() {
+		return auctionFinished;
+	}
+	
+	protected boolean terminationWithoutAgreement() {
+		return currentPrice < lowestPrice;
 	}
 
 	protected AID[] getBidders(DFAgentDescription[] ad) {
